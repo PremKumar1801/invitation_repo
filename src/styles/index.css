@@ -1,0 +1,55 @@
+@import './variables.css';
+@import './royal-frames.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    min-height: 100dvh;
+    font-family: var(--font-cormorant);
+    background-color: var(--color-maroon-night);
+    color: var(--color-ivory-warm);
+    touch-action: manipulation;
+  }
+}
+
+@layer utilities {
+  /* Golden metallic text gradient */
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #ECC870 0%, #FFF5DC 25%, #D4AF37 50%, #B8861E 80%, #ECC870 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Antique gold border glow */
+  .border-gold-royal {
+    border-color: rgba(212, 175, 55, 0.45);
+  }
+
+  .border-gold-subtle {
+    border-color: rgba(212, 175, 55, 0.2);
+  }
+
+  /* Royal background card blur with inner glow */
+  .bg-royal-card {
+    background: linear-gradient(180deg, rgba(74, 14, 23, 0.7) 0%, rgba(31, 6, 10, 0.9) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Royal ornamental divider styling */
+  .royal-divider {
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.7), transparent);
+  }
+}

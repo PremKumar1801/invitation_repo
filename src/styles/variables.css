@@ -1,0 +1,37 @@
+:root {
+  /* Royal Maroon Palette */
+  --color-maroon-night: #1F060A;
+  --color-maroon-deep: #380B13;
+  --color-maroon-royal: #4A0E17;
+  --color-maroon-rich: #5E121E;
+  --color-maroon-crimson: #751726;
+  --color-maroon-light: #8E1F31;
+
+  /* Antique Royal Gold Palette */
+  --color-gold-dark: #5A3E09;
+  --color-gold-deep: #7F5710;
+  --color-gold-antique: #996515;
+  --color-gold-metallic: #B8861E;
+  --color-gold-classic: #C5A059;
+  --color-gold-royal: #D4AF37;
+  --color-gold-light: #E5C46E;
+  --color-gold-pale: #F8ECC8;
+  --color-gold-shimmer: linear-gradient(135deg, #C5A059 0%, #FFF5D6 30%, #D4AF37 50%, #996515 85%, #E5C46E 100%);
+
+  /* Warm Ivory / Silk Cream Palette */
+  --color-ivory-warm: #FAF5EE;
+  --color-ivory-soft: #FDFBF7;
+  --color-ivory-muted: #EFE9DC;
+  --color-ivory-cream: #FFFDD0;
+
+  /* Shadow & Glow Accents */
+  --shadow-royal-gold: 0 4px 20px rgba(212, 175, 55, 0.25);
+  --shadow-royal-glow: 0 0 35px rgba(212, 175, 55, 0.35);
+  --shadow-deep-maroon: 0 10px 30px rgba(18, 4, 7, 0.7);
+
+  /* Fonts */
+  --font-cinzel: 'Cinzel', serif;
+  --font-cormorant: 'Cormorant Garamond', serif;
+  --font-script: 'Great Vibes', cursive;
+  --font-sans: 'Montserrat', sans-serif;
+}

@@ -1,0 +1,664 @@
+/* Fonts (Cormorant Garamond + Noto Devanagari) are loaded globally via index.html. */
+
+/* ── Tokens ──────────────────────────────────────────────────────────────── */
+.wi-root {
+  --wi-burgundy: #5a0f23;
+  --wi-burgundy-deep: #36091a;
+  --wi-gold: #b8923f;
+  --wi-gold-light: #e0c47f;
+  --wi-ivory: #f8efdc;
+  --wi-ivory-dim: #e9dcc0;
+  --wi-ink: #4a1220;
+
+  --wi-font-hi-display: "Noto Serif Devanagari", "Noto Sans Devanagari", serif;
+  --wi-font-hi: "Noto Sans Devanagari", system-ui, sans-serif;
+  --wi-font-en: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+
+  background: var(--wi-burgundy-deep);
+  color: var(--wi-ivory);
+  font-family: var(--wi-font-en);
+  overflow-x: clip;
+}
+
+.wi-root *,
+.wi-root *::before,
+.wi-root *::after {
+  box-sizing: border-box;
+}
+
+/* ── Section shell ───────────────────────────────────────────────────────── */
+.wi-section {
+  position: relative;
+  padding: clamp(4rem, 10vw, 7.5rem) 1.5rem;
+  overflow: hidden;
+}
+
+/* Quiet alternation: deep → burgundy → deep, with a faint gold glow */
+.wi-welcome,
+.wi-date,
+.wi-closing {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(184, 146, 63, 0.12), transparent 60%),
+    var(--wi-burgundy-deep);
+}
+.wi-couple,
+.wi-events,
+.wi-venue {
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(184, 146, 63, 0.1), transparent 55%),
+    var(--wi-burgundy);
+}
+
+.wi-container {
+  position: relative;
+  z-index: 1;
+  max-width: 62rem;
+  margin: 0 auto;
+}
+.wi-center {
+  text-align: center;
+}
+
+/* ── Typography: Hindi leads, English supports ───────────────────────────── */
+.wi-bi {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.wi-hi {
+  font-family: var(--wi-font-hi);
+  line-height: 1.75; /* Devanagari needs room for matras */
+}
+.wi-en {
+  font-family: var(--wi-font-en);
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--wi-gold-light);
+  letter-spacing: 0.01em;
+}
+
+.wi-heading {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+.wi-heading .wi-hi {
+  font-family: var(--wi-font-hi-display);
+  font-weight: 600;
+  font-size: clamp(1.9rem, 5.5vw, 2.9rem);
+  color: var(--wi-ivory);
+}
+.wi-heading .wi-en {
+  font-size: clamp(1.15rem, 3vw, 1.5rem);
+}
+
+.wi-invocation {
+  margin: 0 0 1.5rem;
+  font-family: var(--wi-font-hi-display);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 5vw, 2.3rem);
+  color: var(--wi-gold-light);
+  line-height: 1.6;
+}
+
+.wi-lead .wi-hi {
+  font-size: clamp(1.1rem, 3.2vw, 1.4rem);
+}
+.wi-lead .wi-en {
+  font-size: clamp(1.05rem, 2.8vw, 1.3rem);
+}
+
+.wi-body-copy {
+  max-width: 34rem;
+  margin: 1.5rem auto 0;
+  gap: 0.75rem;
+}
+.wi-body-copy .wi-hi {
+  font-size: clamp(1rem, 2.8vw, 1.15rem);
+}
+.wi-body-copy .wi-en {
+  font-size: clamp(1.05rem, 2.8vw, 1.25rem);
+  font-style: normal;
+  color: var(--wi-ivory-dim);
+}
+
+/* ── Divider ─────────────────────────────────────────────────────────────── */
+.wi-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  margin: 1.75rem auto;
+  max-width: 22rem;
+  color: var(--wi-gold);
+}
+.wi-divider__line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--wi-gold) 50%, transparent);
+}
+.wi-divider__motif {
+  width: 3.25rem;
+  height: auto;
+  flex: none;
+}
+
+/* ── Floral corners ──────────────────────────────────────────────────────── */
+.wi-floral {
+  position: absolute;
+  width: clamp(5rem, 16vw, 9rem);
+  color: var(--wi-gold);
+  opacity: 0.22;
+  pointer-events: none;
+}
+.wi-floral--tl {
+  top: 1rem;
+  left: 1rem;
+}
+.wi-floral--br {
+  right: 1rem;
+  bottom: 1rem;
+  transform: rotate(180deg);
+}
+
+/* ── Couple ──────────────────────────────────────────────────────────────── */
+.wi-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.wi-name__hi {
+  font-family: var(--wi-font-hi-display);
+  font-weight: 700;
+  font-size: clamp(2.2rem, 9vw, 4.4rem);
+  line-height: 1.5;
+  color: var(--wi-ivory);
+  text-shadow: 0 2px 24px rgba(184, 146, 63, 0.25);
+}
+.wi-name__en {
+  font-family: var(--wi-font-en);
+  font-style: italic;
+  font-size: clamp(1.2rem, 3.6vw, 1.7rem);
+  color: var(--wi-gold-light);
+}
+.wi-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 16rem;
+  margin: 1.25rem auto;
+}
+.wi-connector__word {
+  font-family: var(--wi-font-hi-display);
+  font-size: 1.35rem;
+  color: var(--wi-gold);
+}
+.wi-tagline {
+  max-width: 32rem;
+  margin: 2.5rem auto 0;
+}
+.wi-tagline .wi-hi {
+  font-size: clamp(1rem, 2.8vw, 1.15rem);
+}
+.wi-tagline .wi-en {
+  font-size: clamp(1.05rem, 2.8vw, 1.25rem);
+}
+
+/* ── Events timeline ─────────────────────────────────────────────────────── */
+.wi-timeline {
+  position: relative;
+  list-style: none;
+  margin: 3rem 0 0;
+  padding: 0;
+}
+
+/* Mobile first: thread on the left, cards to its right */
+.wi-timeline__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 19px;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--wi-gold) 8%, var(--wi-gold) 92%, transparent);
+  transform-origin: top;
+}
+
+.wi-event {
+  position: relative;
+  padding-left: 3.5rem;
+  margin-bottom: 2rem;
+}
+.wi-event:last-child {
+  margin-bottom: 0;
+}
+
+.wi-event__node {
+  position: absolute;
+  left: 8px;
+  top: 2.1rem;
+  width: 24px;
+  height: 24px;
+  background: var(--wi-burgundy);
+  border: 2px solid var(--wi-gold);
+  transform: rotate(45deg);
+}
+.wi-event__node::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  background: var(--wi-gold);
+}
+
+.wi-event__card {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 1.15rem 1.2rem;
+  text-align: left;
+  color: var(--wi-ink);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent 55%),
+    var(--wi-ivory);
+  border: 1px solid var(--wi-gold);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 4px var(--wi-ivory), inset 0 0 0 5px rgba(184, 146, 63, 0.55);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.wi-event__date {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 4.4rem;
+  padding-right: 1.1rem;
+  border-right: 1px solid rgba(184, 146, 63, 0.6);
+  color: var(--wi-burgundy);
+}
+.wi-event__day {
+  font-family: var(--wi-font-en);
+  font-weight: 600;
+  font-size: 2.6rem;
+  line-height: 1;
+}
+.wi-event__month {
+  margin-top: 0.3rem;
+  font-family: var(--wi-font-hi-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.wi-event__month-en {
+  font-family: var(--wi-font-en);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--wi-gold);
+  filter: brightness(0.8);
+  text-align: center;
+}
+
+.wi-event__body {
+  min-width: 0;
+}
+.wi-event__title .wi-hi {
+  font-family: var(--wi-font-hi-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: var(--wi-burgundy);
+}
+.wi-event__title .wi-en {
+  font-size: 1.1rem;
+  color: var(--wi-ink);
+}
+.wi-event__weekday {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: rgba(74, 18, 32, 0.8);
+}
+.wi-event__weekday [lang="hi"] {
+  font-family: var(--wi-font-hi);
+}
+.wi-event__weekday [lang="en"] {
+  font-family: var(--wi-font-en);
+  font-style: italic;
+  font-size: 1.05rem;
+}
+.wi-event__sep {
+  width: 5px;
+  height: 5px;
+  background: var(--wi-gold);
+  transform: rotate(45deg);
+}
+.wi-event__time {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+}
+
+/* The wedding itself: slightly richer card, brighter node */
+.wi-event--main .wi-event__card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.6), transparent 55%),
+    linear-gradient(0deg, rgba(224, 196, 127, 0.28), rgba(224, 196, 127, 0.28)),
+    var(--wi-ivory);
+  border-width: 2px;
+  box-shadow:
+    inset 0 0 0 4px var(--wi-ivory),
+    inset 0 0 0 5px var(--wi-gold),
+    0 0 40px rgba(224, 196, 127, 0.28);
+}
+.wi-event--main .wi-event__node {
+  background: var(--wi-gold-light);
+  box-shadow: 0 0 18px rgba(224, 196, 127, 0.8);
+}
+.wi-event--main .wi-event__node::after {
+  background: var(--wi-burgundy);
+}
+
+@media (hover: hover) {
+  .wi-event__card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      inset 0 0 0 4px var(--wi-ivory),
+      inset 0 0 0 5px var(--wi-gold),
+      0 14px 34px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* Desktop: thread in the centre, cards alternate sides */
+@media (min-width: 768px) {
+  .wi-timeline__line {
+    left: 50%;
+    margin-left: -1px;
+  }
+  .wi-event {
+    width: calc(50% - 3rem);
+    padding-left: 0;
+    margin-bottom: 2.5rem;
+  }
+  .wi-event--left {
+    margin-right: auto;
+  }
+  .wi-event--right {
+    margin-left: auto;
+  }
+  .wi-event--left .wi-event__node {
+    left: auto;
+    right: -3.75rem; /* 3rem gutter + half node */
+  }
+  .wi-event--right .wi-event__node {
+    left: -3.75rem;
+  }
+  .wi-event__day {
+    font-size: 3rem;
+  }
+}
+
+/* ── Wedding date ────────────────────────────────────────────────────────── */
+.wi-bigdate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  margin-bottom: 2rem;
+}
+.wi-bigdate__day {
+  font-family: var(--wi-font-en);
+  font-weight: 500;
+  font-size: clamp(6rem, 24vw, 11rem);
+  line-height: 1.12;
+  margin-bottom: 0.1em;
+  color: var(--wi-gold-light);
+  text-shadow: 0 0 60px rgba(224, 196, 127, 0.3);
+}
+.wi-bigdate__month {
+  font-family: var(--wi-font-hi-display);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 5vw, 2.3rem);
+  line-height: 1.6;
+}
+.wi-bigdate__year {
+  font-family: var(--wi-font-en);
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  letter-spacing: 0.3em;
+  color: var(--wi-gold);
+}
+.wi-datelines .wi-hi {
+  font-size: clamp(1.1rem, 3.2vw, 1.35rem);
+}
+.wi-datelines .wi-en {
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+}
+
+/* ── Venue ───────────────────────────────────────────────────────────────── */
+.wi-venue__card {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 2rem;
+  color: var(--wi-ink);
+  background: var(--wi-ivory);
+  border: 1px solid var(--wi-gold);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 5px var(--wi-ivory), inset 0 0 0 6px rgba(184, 146, 63, 0.55), 0 18px 40px rgba(0, 0, 0, 0.3);
+}
+.wi-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 1.5rem;
+  color: var(--wi-burgundy);
+  background: rgba(184, 146, 63, 0.1);
+  border-radius: 10px;
+}
+.wi-venue__name {
+  margin-bottom: 0.9rem;
+}
+.wi-venue__name .wi-hi {
+  font-family: var(--wi-font-hi-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 4.6vw, 1.9rem);
+  color: var(--wi-burgundy);
+}
+.wi-venue__name .wi-en {
+  font-size: 1.3rem;
+  color: var(--wi-ink);
+}
+.wi-venue__address .wi-hi {
+  font-size: 1rem;
+  color: rgba(74, 18, 32, 0.9);
+}
+.wi-venue__address .wi-en {
+  font-size: 1.1rem;
+  font-style: normal;
+  color: rgba(74, 18, 32, 0.8);
+}
+
+.wi-button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.8rem;
+  font-family: var(--wi-font-hi);
+  color: var(--wi-ivory);
+  text-decoration: none;
+  background: var(--wi-burgundy);
+  border: 1px solid var(--wi-gold);
+  border-radius: 999px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.wi-button__en {
+  font-family: var(--wi-font-en);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--wi-gold-light);
+}
+.wi-button:hover {
+  background: var(--wi-burgundy-deep);
+}
+.wi-button:focus-visible {
+  outline: 2px solid var(--wi-gold-light);
+  outline-offset: 3px;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .wi-event__card,
+  .wi-button {
+    transition: none;
+  }
+  .wi-event__card:hover {
+    transform: none;
+  }
+}
+
+
+/* ── Couple portraits ────────────────────────────────────────────────────── */
+.wi-portraits {
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(184, 146, 63, 0.11), transparent 65%),
+    var(--wi-burgundy-deep);
+}
+
+.wi-portraits .wi-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 3rem);
+}
+
+.wi-portraits__row {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1rem, 4vw, 2.5rem);
+  width: 100%;
+}
+
+.wi-portrait {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Individual portrait — portrait aspect, modest width */
+.wi-portraits__row .wi-portrait {
+  flex: 1;
+  max-width: 46%;
+}
+
+/* Couple photo — wider, landscape */
+.wi-portraits > .wi-container > .wi-portrait {
+  width: min(100%, 480px);
+}
+
+.wi-portrait__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  /* antique gold border via gradient trick */
+  background:
+    linear-gradient(var(--wi-burgundy), var(--wi-burgundy)) padding-box,
+    linear-gradient(135deg, #fff1bd 0%, #c9962f 25%, #7a4f12 50%, #ebcb74 75%, #b07d25 100%) border-box;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(224, 196, 127, 0.18);
+}
+
+.wi-portrait__img {
+  display: block;
+  width: 100%;
+  /* Portrait photos: tall crop */
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* Couple photo: wider landscape crop */
+.wi-portraits > .wi-container > .wi-portrait .wi-portrait__img {
+  aspect-ratio: 4 / 3;
+  object-position: center center;
+}
+
+/* Subtle sheen sweep on hover / touch */
+.wi-portrait__shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
+  transition: transform 0.65s ease;
+}
+.wi-portrait__frame:hover .wi-portrait__shimmer,
+.wi-portrait__frame:focus-within .wi-portrait__shimmer {
+  transform: translateX(120%);
+}
+
+.wi-portrait__label {
+  font-family: var(--wi-font-hi-display);
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--wi-gold-light);
+  text-align: center;
+}
+
+/* Mobile: on tiny screens, stack portraits vertically */
+@media (max-width: 360px) {
+  .wi-portraits__row {
+    flex-direction: column;
+    align-items: center;
+  }
+  .wi-portraits__row .wi-portrait {
+    max-width: 80%;
+  }
+}
+
+/* 390px / 430px — keep portrait row but tighten gap */
+@media (min-width: 361px) and (max-width: 430px) {
+  .wi-portraits__row {
+    gap: 0.75rem;
+  }
+  .wi-portraits__row .wi-portrait {
+    max-width: 48%;
+  }
+}
+
+/* Hindi text overflow guards — prevents Devanagari matras clipping */
+.wi-hi {
+  overflow-wrap: break-word;
+  word-break: keep-all;
+  hyphens: none;
+}
+
+/* Clamp very long Devanagari headings on small phones */
+@media (max-width: 430px) {
+  .wi-name__hi {
+    font-size: clamp(1.6rem, 7vw, 3rem);
+  }
+  .wi-heading .wi-hi {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+  }
+  .wi-event__title .wi-hi {
+    font-size: 1.1rem;
+  }
+  .wi-venue__name .wi-hi {
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+  }
+}

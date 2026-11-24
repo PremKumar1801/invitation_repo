@@ -1,0 +1,232 @@
+/* ==========================================================================
+   Royal Frames & Invitation Styling
+   ========================================================================== */
+
+:root {
+  --rw-burgundy-950: #2a0710;
+  --rw-burgundy-900: #3a0a14;
+  --rw-burgundy-800: #5a0f1e;
+  --rw-gold-light: #f0dc9c;
+  --rw-gold: #c9a24b;
+  --rw-gold-deep: #8a6a22;
+  --rw-ivory: #f6ecd6;
+  --rw-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- You Are Cordially Invited ---------- */
+
+.rw-invite {
+  display: grid;
+  place-items: center;
+  padding: clamp(24px, 8vw, 64px);
+  text-align: center;
+}
+
+.rw-invite--full {
+  min-height: 100svh;
+}
+
+/* Reduced size (~22% smaller) for a refined, balanced appearance */
+.rw-invite__text {
+  margin: 0;
+  max-width: 16ch;
+  font-size: clamp(1.4rem, 5.2vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+  color: var(--rw-ivory);
+  text-shadow: 0 0 28px rgba(201, 162, 75, 0.28);
+}
+
+/* ---------- Photo section layout ---------- */
+
+.rw-photos {
+  padding-inline: clamp(16px, 5vw, 32px);
+  padding-block: clamp(24px, 7vw, 56px);
+  overflow-x: clip; /* no horizontal scroll, and no scroll container created */
+}
+
+.rw-photos__portraits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(12px, 4vw, 28px);
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+.rw-photos__couple {
+  max-width: 640px;
+  margin: clamp(32px, 9vw, 64px) auto 0;
+}
+
+/* ---------- Frame ---------- */
+
+.rw-frame {
+  --rw-pad: clamp(10px, 3vw, 16px);
+  --rw-corner: clamp(24px, 7.5vw, 34px);
+  --rw-corner-offset: 3px;
+
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  min-width: 0;
+}
+
+/* Antique gold border: gradient shows through the plate's padding */
+.rw-frame__plate {
+  padding: 2px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #f0dc9c 0%, #c9a24b 35%, #8a6a22 62%, #d9b862 100%);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Deep burgundy surround with a faint gold floral dot pattern */
+.rw-frame__panel {
+  position: relative;
+  padding: var(--rw-pad);
+  border-radius: 4px;
+  background-color: var(--rw-burgundy-900);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cg fill='%23c9a24b' fill-opacity='.10'%3E%3Ccircle cx='14' cy='14' r='1.6'/%3E%3Ccircle cx='14' cy='8.5' r='1.1'/%3E%3Ccircle cx='14' cy='19.5' r='1.1'/%3E%3Ccircle cx='8.5' cy='14' r='1.1'/%3E%3Ccircle cx='19.5' cy='14' r='1.1'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(160deg, var(--rw-burgundy-800), var(--rw-burgundy-950));
+  background-size: 28px 28px, auto;
+}
+
+/* Delicate inner border with a soft golden highlight */
+.rw-frame__mat {
+  position: relative;
+  overflow: hidden; /* contains the settle-scale so nothing leaks past the border */
+  line-height: 0;
+  border: 1px solid var(--rw-gold);
+  box-shadow: 0 0 0 1px rgba(240, 220, 156, 0.18), 0 0 14px rgba(201, 162, 75, 0.25);
+}
+
+.rw-frame__mat::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 236, 170, 0.35);
+}
+
+.rw-frame__reveal {
+  display: block;
+}
+
+/* Natural aspect ratio, never cropped, never stretched */
+.rw-frame__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+/* Corners */
+.rw-corner {
+  position: absolute;
+  z-index: 2;
+  width: var(--rw-corner);
+  height: var(--rw-corner);
+  pointer-events: none;
+}
+.rw-corner--tl { top: var(--rw-corner-offset); left: var(--rw-corner-offset); }
+.rw-corner--tr { top: var(--rw-corner-offset); right: var(--rw-corner-offset); transform: scaleX(-1); }
+.rw-corner--bl { bottom: var(--rw-corner-offset); left: var(--rw-corner-offset); transform: scaleY(-1); }
+.rw-corner--br { bottom: var(--rw-corner-offset); right: var(--rw-corner-offset); transform: scale(-1, -1); }
+
+.rw-frame__caption {
+  margin-top: clamp(10px, 3vw, 16px);
+  text-align: center;
+  font-family: inherit;
+  font-size: clamp(1rem, 4.2vw, 1.35rem);
+  line-height: 1.25;
+  color: var(--rw-ivory);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Couple frame: grander ---------- */
+
+.rw-frame--couple {
+  --rw-pad: clamp(14px, 4vw, 24px);
+  --rw-corner: clamp(30px, 9vw, 46px);
+}
+
+.rw-frame--couple .rw-frame__plate {
+  padding: 3px;
+  border-radius: 8px;
+  /* second, thinner outer ring (box-shadow never adds scroll width) */
+  box-shadow:
+    0 0 0 4px var(--rw-burgundy-950),
+    0 0 0 5px rgba(201, 162, 75, 0.7),
+    0 18px 44px rgba(0, 0, 0, 0.45);
+}
+
+/* Lotus crests straddle the top and bottom border */
+.rw-crest {
+  position: absolute;
+  left: 50%;
+  width: clamp(34px, 10vw, 48px);
+  height: auto;
+  z-index: 3;
+  pointer-events: none;
+}
+.rw-crest--top { top: calc(var(--rw-pad) * -0.5 - 6px); transform: translateX(-50%); }
+.rw-crest--bottom { bottom: calc(var(--rw-pad) * -0.5 - 6px); transform: translateX(-50%) scaleY(-1); }
+
+/* Very subtle golden glow; only opacity animates, so it stays cheap on phones */
+.rw-frame--couple::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: 10px;
+  pointer-events: none;
+  box-shadow: 0 0 36px 8px rgba(201, 162, 75, 0.28), 0 0 90px 22px rgba(201, 162, 75, 0.1);
+  animation: rw-breathe 7s ease-in-out infinite alternate;
+}
+
+@keyframes rw-breathe {
+  from { opacity: 0.55; }
+  to { opacity: 0.95; }
+}
+
+@media (max-width: 480px) {
+  .rw-frame--couple::before {
+    box-shadow: 0 0 24px 5px rgba(201, 162, 75, 0.26), 0 0 56px 12px rgba(201, 162, 75, 0.09);
+  }
+}
+
+/* ---------- Desktop hover (mouse only) ---------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .rw-frame__img {
+    transition: transform 0.9s var(--rw-ease);
+  }
+  .rw-frame__plate {
+    transition: box-shadow 0.6s ease;
+  }
+  .rw-frame:hover .rw-frame__img {
+    transform: scale(1.035);
+  }
+  .rw-frame--portrait:hover .rw-frame__plate {
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4), 0 0 22px rgba(201, 162, 75, 0.3);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .rw-frame--couple::before {
+    animation: none;
+    opacity: 0.8;
+  }
+  .rw-frame__img,
+  .rw-frame__plate {
+    transition: none;
+  }
+  .rw-frame:hover .rw-frame__img {
+    transform: none;
+  }
+}

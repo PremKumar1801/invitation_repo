@@ -1,0 +1,350 @@
+/* Fonts are loaded globally via index.html. No duplicate import needed. */
+
+/* ==========================================================================
+   Royal invitation : "An Eternal Celebration"
+   Scoped under .royal-invitation so it does not leak into the rest of the app.
+   ========================================================================== */
+
+.royal-invitation {
+  --gold: #d4af37;
+  --gold-light: #f7e4a6;
+  --ivory: #fbf3df;
+  --burgundy-ink: #2b0712;
+  --burgundy: #55102a;
+  --burgundy-lift: #7b1a31;
+  --font-display: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(72px, 12vh, 120px) 20px;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    var(--burgundy-ink) 0%,
+    var(--burgundy) 14%,
+    #6e1830 50%,
+    var(--burgundy) 86%,
+    var(--burgundy-ink) 100%
+  );
+  color: var(--ivory);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Layer 0: woven silk texture ---------- */
+
+.royal-invitation__texture {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(255, 226, 160, 0.07) 1px, transparent 1.2px),
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.012) 0 2px, transparent 2px 7px);
+  background-size: 10px 10px, auto;
+}
+
+/* ---------- Layer 1: warm golden ambient light ---------- */
+
+.royal-invitation__glow-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.royal-invitation__glow-anchor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.royal-invitation__glow-core {
+  display: block;
+  width: min(130vw, 760px);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 214, 128, 0.34),
+    rgba(255, 190, 96, 0.12) 48%,
+    transparent 100%
+  );
+}
+
+/* ---------- Layer 2: mandap arch ---------- */
+
+.royal-invitation__arch-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.royal-invitation__arch {
+  width: min(124vw, 680px);
+  opacity: 0.42;
+}
+
+.royal-invitation__arch svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* ---------- Layer 2: glowing motes and falling petals ---------- */
+
+.glow-motes,
+.falling-petals {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.glow-mote {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6d2 0%, #e9c264 40%, rgba(233, 194, 100, 0) 72%);
+  box-shadow: 0 0 8px rgba(246, 214, 130, 0.5);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: mote-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes mote-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.6);
+  }
+  20% {
+    opacity: var(--peak, 0.6);
+  }
+  50% {
+    transform: translate3d(calc(var(--drift, 0) * 1px), -10vh, 0) scale(1);
+  }
+  80% {
+    opacity: var(--peak, 0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(var(--drift, 0) * -1px), -22vh, 0) scale(0.7);
+  }
+}
+
+.falling-petal {
+  position: absolute;
+  top: 0;
+  display: block;
+  will-change: transform, opacity;
+  animation-name: petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.falling-petal__body {
+  display: block;
+  border-radius: 0 100% 0 100%;
+  background: linear-gradient(135deg, var(--petal-light) 0%, var(--petal) 72%);
+  box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.15);
+  opacity: 0.85;
+  will-change: transform;
+  animation-name: petal-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes petal-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -12vh, 0);
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 115vh, 0);
+  }
+}
+
+@keyframes petal-sway {
+  0%,
+  100% {
+    transform: translate3d(-14px, 0, 0) rotate(-24deg);
+  }
+  50% {
+    transform: translate3d(14px, 0, 0) rotate(28deg) scaleY(0.82);
+  }
+}
+
+/* ---------- Layer 3: ornamental frame and content panel ---------- */
+
+.royal-invitation__panel {
+  position: relative;
+  z-index: 3;
+  box-sizing: border-box;
+  width: min(88vw, 420px);
+  padding: 76px 26px 64px;
+  text-align: center;
+}
+
+.royal-invitation__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.royal-invitation__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(18px, 3.4vh, 28px);
+}
+
+.royal-invitation__families {
+  margin: 0;
+  font-style: italic;
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--gold-light);
+}
+
+.royal-invitation__request {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(1.7rem, 7vw, 2.3rem);
+  font-weight: 500;
+  line-height: 1.2;
+  text-wrap: balance;
+  color: var(--ivory);
+}
+
+/* Names: gold gradient text, the memorable element of the section */
+
+.couple-names {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 6px 0;
+}
+
+.couple-names__name {
+  margin: 0;
+  padding-bottom: 0.06em;
+  font-family: "Noto Serif Devanagari", var(--font-display);
+  font-size: clamp(1.8rem, 8vw, 3.4rem);
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  text-wrap: balance;
+  background: linear-gradient(180deg, #fff4c8 0%, #f0cb6b 48%, #b98a2c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.couple-names__connector {
+  display: block;
+  font-style: italic;
+  font-size: clamp(2rem, 9vw, 3rem);
+  line-height: 1;
+  color: var(--gold);
+}
+
+.royal-invitation__occasion {
+  max-width: 28ch;
+  margin: 0;
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.5;
+  text-wrap: balance;
+  color: rgba(251, 243, 223, 0.88);
+}
+
+.royal-invitation__date {
+  margin: 0;
+  font-size: clamp(1.4rem, 6vw, 1.9rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--gold-light);
+  text-shadow: 0 0 18px rgba(255, 205, 120, 0.35);
+}
+
+.royal-invitation__closing {
+  max-width: 30ch;
+  margin: 8px 0 0;
+  font-size: 1.1rem;
+  font-style: italic;
+  line-height: 1.55;
+  text-wrap: balance;
+  color: var(--ivory);
+  opacity: 0.9;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 768px) {
+  .royal-invitation__panel {
+    width: min(560px, 72vw);
+    padding: 92px 56px 76px;
+  }
+
+  .royal-invitation__content {
+    gap: 34px;
+  }
+
+  .royal-invitation__families,
+  .royal-invitation__occasion,
+  .royal-invitation__closing {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .falling-petal:nth-child(n + 11) {
+    display: none;
+  }
+}
+
+/* ---------- Reduced motion: keep the composition, drop the drift ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .royal-invitation__texture,
+  .falling-petals {
+    display: none;
+  }
+
+  .glow-mote {
+    animation: none;
+    opacity: var(--peak, 0.5);
+  }
+}
