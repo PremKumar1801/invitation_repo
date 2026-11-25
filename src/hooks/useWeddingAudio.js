@@ -2,87 +2,115 @@ import { useEffect, useRef } from 'react';
 
 const DEFAULT_AUDIO_SRC = '/audio/wedding-music.mp3';
 const INITIAL_VOLUME = 0.3;
-const ACTIVATION_EVENTS = ['touchend', 'pointerup', 'click', 'keydown'];
 
 /**
- * Manages a single persistent HTMLAudioElement instance for the wedding invitation.
- * - Preloads unmuted, looping audio at 30% volume on mount.
- * - Attempts unmuted autoplay immediately where browser policies allow.
- * - If autoplay is blocked (e.g. iOS Safari / Android Chrome), starts unmuted playback
- *   synchronously inside the visitor's first qualifying user interaction.
- * - Survives React rerenders and page/section transitions without restarting.
+ * Manages a single persistent HTMLAudioElement for the wedding invitation.
+ *
+ * Strategy (works on iOS Safari, Android Chrome, and desktop):
+ *  1. On mount, attempt unmuted autoplay — works on desktops that allow it.
+ *  2. If blocked, register capture-phase listeners for the visitor's first tap/click/key.
+ *     Inside that handler, create a *fresh* Audio element and call play() synchronously
+ *     so iOS Safari treats it as user-initiated.
+ *  3. Once playing, remove all listeners. Music loops continuously.
+ *  4. No visible controls — music is always unmuted.
  */
 export function useWeddingAudio(src = DEFAULT_AUDIO_SRC) {
   const audioRef = useRef(null);
-  const hasStartedRef = useRef(false);
+  const startedRef = useRef(false);
 
   useEffect(() => {
-    let isDisposed = false;
+    let disposed = false;
 
-    const audio = new Audio(src);
-    audio.loop = true;
-    audio.muted = false;
-    audio.volume = INITIAL_VOLUME;
-    audio.preload = 'auto';
-    audio.playsInline = true;
-    audio.load();
-    audioRef.current = audio;
+    // ── helpers ──────────────────────────────────────────────────────────
+    const events = ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'click', 'keydown'];
 
-    const removeListeners = () => {
-      ACTIVATION_EVENTS.forEach((eventName) => {
-        document.removeEventListener(eventName, handleFirstInteraction, true);
-      });
+    const detach = () => {
+      events.forEach((e) => document.removeEventListener(e, onGesture, true));
     };
 
-    const handlePlay = () => {
-      if (isDisposed) return;
-      hasStartedRef.current = true;
-      removeListeners();
+    const markStarted = () => {
+      if (disposed) return;
+      startedRef.current = true;
+      detach();
     };
 
-    audio.addEventListener('play', handlePlay);
+    // ── build an Audio element ──────────────────────────────────────────
+    const createAudio = () => {
+      const a = new Audio(src);
+      a.loop = true;
+      a.muted = false;
+      a.volume = INITIAL_VOLUME;
+      a.preload = 'auto';
+      a.setAttribute('playsinline', '');
+      return a;
+    };
 
-    const tryPlay = () => {
-      if (isDisposed || hasStartedRef.current || !audio.paused) return;
+    // ── gesture handler (runs inside user-activation on mobile) ─────────
+    const onGesture = () => {
+      if (startedRef.current) return;
+
+      // If the pre-created element is still paused, try it first.
+      let audio = audioRef.current;
+      if (audio && !audio.paused) {
+        markStarted();
+        return;
+      }
+
+      // On iOS Safari the safest path is a fresh Audio created inside the
+      // gesture callback — the browser marks it as user-initiated.
+      if (!audio || audio.paused) {
+        if (audio) {
+          // Dispose the pre-created one that couldn't autoplay.
+          audio.pause();
+          audio.removeAttribute('src');
+          audio.load();
+        }
+        audio = createAudio();
+        audioRef.current = audio;
+      }
+
       audio.muted = false;
       audio.volume = INITIAL_VOLUME;
 
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            if (isDisposed) return;
-            hasStartedRef.current = true;
-            removeListeners();
-          })
-          .catch(() => {
-            // Autoplay blocked or gesture didn't qualify (e.g. scroll); keep listeners.
-          });
+      const p = audio.play();
+      if (p !== undefined) {
+        p.then(markStarted).catch(() => {
+          // This particular event type didn't qualify; keep listeners for the next one.
+        });
+      } else {
+        markStarted();
       }
     };
 
-    const handleFirstInteraction = () => {
-      tryPlay();
-    };
+    // ── mount: preload + try autoplay ───────────────────────────────────
+    const audio = createAudio();
+    audio.load();
+    audioRef.current = audio;
 
-    ACTIVATION_EVENTS.forEach((eventName) => {
-      document.addEventListener(eventName, handleFirstInteraction, {
-        capture: true,
-        passive: true,
+    const p = audio.play();
+    if (p !== undefined) {
+      p.then(markStarted).catch(() => {
+        // Autoplay blocked — gesture listeners will handle it.
       });
+    }
+
+    // Register gesture listeners (capture phase, passive so we don't block scrolling).
+    events.forEach((e) => {
+      document.addEventListener(e, onGesture, { capture: true, passive: true });
     });
 
-    // Attempt unmuted autoplay on mount; if blocked, first interaction listeners stay active.
-    tryPlay();
-
+    // ── cleanup ─────────────────────────────────────────────────────────
     return () => {
-      isDisposed = true;
-      removeListeners();
-      audio.removeEventListener('play', handlePlay);
-      audio.pause();
-      audio.src = '';
-      audioRef.current = null;
-      hasStartedRef.current = false;
+      disposed = true;
+      detach();
+      const a = audioRef.current;
+      if (a) {
+        a.pause();
+        a.removeAttribute('src');
+        a.load();
+        audioRef.current = null;
+      }
+      startedRef.current = false;
     };
   }, [src]);
 }
