@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import OpeningScene from '../components/invitation/OpeningScene';
 import RoyalInvitation from '../components/invitation/RoyalInvitation';
 import WeddingInvitationBody from '../components/invitation/WeddingInvitationBody';
-import FloatingMusicControl from '../components/invitation/FloatingMusicControl';
 import { useWeddingAudio } from '../hooks/useWeddingAudio';
 import { weddingConfig, weddingContent } from '../weddingConfig';
 
@@ -26,7 +25,7 @@ import { weddingConfig, weddingContent } from '../weddingConfig';
  */
 export default function HomePage() {
   const [openingDone, setOpeningDone] = useState(false);
-  const { isPlaying, isAutoplayBlocked, hasError, toggle: toggleMusic } = useWeddingAudio('/audio/wedding-music.mp3');
+  useWeddingAudio('/audio/wedding-music.mp3');
 
   // Stable reference prevents re-subscribing timers inside OpeningScene
   const handleOpeningComplete = useCallback(() => {
@@ -74,14 +73,6 @@ export default function HomePage() {
           <WeddingInvitationBody content={weddingContent} />
         </motion.div>
       )}
-
-      {/* ── Persistent Floating Music Control ── */}
-      <FloatingMusicControl
-        visible={!hasError}
-        isPlaying={isPlaying}
-        isAutoplayBlocked={isAutoplayBlocked}
-        onToggle={toggleMusic}
-      />
     </>
   );
 }

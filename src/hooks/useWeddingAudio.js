@@ -1,124 +1,88 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 const DEFAULT_AUDIO_SRC = '/audio/wedding-music.mp3';
 const INITIAL_VOLUME = 0.3;
+const ACTIVATION_EVENTS = ['touchend', 'pointerup', 'click', 'keydown'];
 
 /**
  * Manages a single persistent HTMLAudioElement instance for the wedding invitation.
- * - Initialized at 30% volume with continuous looping.
- * - Attempts automatic playback on mount wherever browser policies allow.
- * - If autoplay is blocked, tracks `isAutoplayBlocked` and unlocks seamlessly on the
- *   visitor's first interaction (or via FloatingMusicControl).
- * - Survives React rerenders and section transitions without restarting.
+ * - Preloads unmuted, looping audio at 30% volume on mount.
+ * - Attempts unmuted autoplay immediately where browser policies allow.
+ * - If autoplay is blocked (e.g. iOS Safari / Android Chrome), starts unmuted playback
+ *   synchronously inside the visitor's first qualifying user interaction.
+ * - Survives React rerenders and page/section transitions without restarting.
  */
 export function useWeddingAudio(src = DEFAULT_AUDIO_SRC) {
   const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isAutoplayBlocked, setIsAutoplayBlocked] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const hasStartedRef = useRef(false);
 
   useEffect(() => {
     let isDisposed = false;
+
     const audio = new Audio(src);
     audio.loop = true;
     audio.muted = false;
     audio.volume = INITIAL_VOLUME;
     audio.preload = 'auto';
+    audio.playsInline = true;
+    audio.load();
+    audioRef.current = audio;
+
+    const removeListeners = () => {
+      ACTIVATION_EVENTS.forEach((eventName) => {
+        document.removeEventListener(eventName, handleFirstInteraction, true);
+      });
+    };
 
     const handlePlay = () => {
       if (isDisposed) return;
-      setIsPlaying(true);
-      setIsAutoplayBlocked(false);
-    };
-    const handlePause = () => {
-      if (isDisposed) return;
-      setIsPlaying(false);
-    };
-    const handleError = () => {
-      if (isDisposed) return;
-      setHasError(true);
-      setIsPlaying(false);
-      setIsAutoplayBlocked(false);
+      hasStartedRef.current = true;
+      removeListeners();
     };
 
     audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('error', handleError);
 
-    audioRef.current = audio;
+    const tryPlay = () => {
+      if (isDisposed || hasStartedRef.current || !audio.paused) return;
+      audio.muted = false;
+      audio.volume = INITIAL_VOLUME;
 
-    // Attempt autoplay immediately when the invitation opens.
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch((err) => {
-        if (isDisposed || err?.name === 'AbortError') return;
-        setIsPlaying(false);
-        setIsAutoplayBlocked(true);
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            if (isDisposed) return;
+            hasStartedRef.current = true;
+            removeListeners();
+          })
+          .catch(() => {
+            // Autoplay blocked or gesture didn't qualify (e.g. scroll); keep listeners.
+          });
+      }
+    };
+
+    const handleFirstInteraction = () => {
+      tryPlay();
+    };
+
+    ACTIVATION_EVENTS.forEach((eventName) => {
+      document.addEventListener(eventName, handleFirstInteraction, {
+        capture: true,
+        passive: true,
       });
-    }
+    });
+
+    // Attempt unmuted autoplay on mount; if blocked, first interaction listeners stay active.
+    tryPlay();
 
     return () => {
       isDisposed = true;
+      removeListeners();
       audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('error', handleError);
       audio.pause();
       audio.src = '';
       audioRef.current = null;
+      hasStartedRef.current = false;
     };
   }, [src]);
-
-  // If browser blocked autoplay, unlock audio on the visitor's first gesture anywhere.
-  useEffect(() => {
-    if (!isAutoplayBlocked || hasError) return undefined;
-
-    const unlockOnGesture = (event) => {
-      // Let FloatingMusicControl's own click handler manage clicks inside it.
-      if (event.target instanceof Element && event.target.closest('[data-music-control]')) {
-        return;
-      }
-      const audio = audioRef.current;
-      if (!audio || !audio.paused) return;
-
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Still blocked; keep listener or let user click FloatingMusicControl.
-        });
-      }
-    };
-
-    document.addEventListener('pointerdown', unlockOnGesture, { passive: true });
-    document.addEventListener('keydown', unlockOnGesture, { passive: true });
-
-    return () => {
-      document.removeEventListener('pointerdown', unlockOnGesture);
-      document.removeEventListener('keydown', unlockOnGesture);
-    };
-  }, [isAutoplayBlocked, hasError]);
-
-  const toggle = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio || hasError) return;
-
-    if (audio.paused || audio.muted) {
-      audio.muted = false;
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          setIsPlaying(false);
-        });
-      }
-    } else {
-      setIsAutoplayBlocked(false);
-      audio.pause();
-    }
-  }, [hasError]);
-
-  return {
-    isPlaying,
-    isAutoplayBlocked,
-    hasError,
-    toggle,
-  };
 }
