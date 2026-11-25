@@ -11,11 +11,11 @@ export const weddingConfig = Object.freeze({
   // ── Couple ───────────────────────────────────────────────────────────────
   couple: {
     bride: {
-      hi: 'आयुषी प्रीति कुमारी',
+      hi: 'आयुषी प्रिती कुमारी',
       en: 'Ayushi Preeti Kumari',
     },
     groom: {
-      hi: 'प्रवीण कुमार',
+      hi: 'चिरंजीवी प्रवीण कुमार',
       en: 'Praveen Kumar',
     },
     connector: {
@@ -196,8 +196,8 @@ export const weddingConfig = Object.freeze({
   },
 
   // ── Flat convenience getters for legacy component props ───────────────────
-  brideName: 'आयुषी प्रीति कुमारी',
-  groomName: 'प्रवीण कुमार',
+  brideName: 'आयुषी प्रिती कुमारी',
+  groomName: 'चिरंजीवी प्रवीण कुमार',
   connector: '&',
   familiesLine: 'Together with their families',
   requestLine: 'Request the pleasure of your company',
