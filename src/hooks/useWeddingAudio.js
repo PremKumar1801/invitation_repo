@@ -4,15 +4,21 @@ const DEFAULT_AUDIO_SRC = '/audio/wedding-music.mp3';
 const INITIAL_VOLUME = 0.3;
 
 /**
- * Manages a single persistent HTMLAudioElement for the wedding invitation.
+ * Wedding background music — instant playback on first tap.
  *
- * Strategy (works on iOS Safari, Android Chrome, and desktop):
- *  1. On mount, attempt unmuted autoplay — works on desktops that allow it.
- *  2. If blocked, register capture-phase listeners for the visitor's first tap/click/key.
- *     Inside that handler, create a *fresh* Audio element and call play() synchronously
- *     so iOS Safari treats it as user-initiated.
- *  3. Once playing, remove all listeners. Music loops continuously.
- *  4. No visible controls — music is always unmuted.
+ * How it works:
+ *  1. The MP3 is already downloading thanks to <link rel="preload"> in index.html.
+ *  2. On mount we create a single Audio element with preload="auto" so the browser
+ *     starts decoding from the preloaded cache immediately.
+ *  3. We attempt unmuted autoplay — succeeds on most desktops.
+ *  4. If autoplay is blocked (all mobile browsers), we listen for the visitor's very
+ *     first touch/click/key and call play() on the SAME pre-buffered element.
+ *     Because the MP3 is already in memory, playback starts in <50 ms.
+ *  5. Once playing, all listeners are removed. Music loops continuously, no controls.
+ *
+ * iOS Safari note: play() just needs to be called synchronously inside a user-gesture
+ * handler. The Audio element itself can (and should) be pre-created so the buffer is
+ * ready. Creating a fresh Audio inside the handler forces a re-download — that's slow.
  */
 export function useWeddingAudio(src = DEFAULT_AUDIO_SRC) {
   const audioRef = useRef(null);
@@ -21,8 +27,8 @@ export function useWeddingAudio(src = DEFAULT_AUDIO_SRC) {
   useEffect(() => {
     let disposed = false;
 
-    // ── helpers ──────────────────────────────────────────────────────────
-    const events = ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'click', 'keydown'];
+    // ── Gesture events that qualify as user-activation on every browser ──
+    const events = ['touchstart', 'touchend', 'click', 'keydown'];
 
     const detach = () => {
       events.forEach((e) => document.removeEventListener(e, onGesture, true));
@@ -34,72 +40,65 @@ export function useWeddingAudio(src = DEFAULT_AUDIO_SRC) {
       detach();
     };
 
-    // ── build an Audio element ──────────────────────────────────────────
-    const createAudio = () => {
-      const a = new Audio(src);
-      a.loop = true;
-      a.muted = false;
-      a.volume = INITIAL_VOLUME;
-      a.preload = 'auto';
-      a.setAttribute('playsinline', '');
-      return a;
-    };
+    // ── Create ONE Audio element on mount — reuse it everywhere ─────────
+    const audio = new Audio(src);
+    audio.loop = true;
+    audio.muted = false;
+    audio.volume = INITIAL_VOLUME;
+    audio.preload = 'auto';
+    audio.setAttribute('playsinline', '');
+    audio.load(); // triggers buffering from the preloaded cache
+    audioRef.current = audio;
 
-    // ── gesture handler (runs inside user-activation on mobile) ─────────
+    // ── First-gesture handler: play the pre-buffered element ────────────
     const onGesture = () => {
-      if (startedRef.current) return;
+      if (startedRef.current || disposed) return;
 
-      // If the pre-created element is still paused, try it first.
-      let audio = audioRef.current;
-      if (audio && !audio.paused) {
+      const a = audioRef.current;
+      if (!a) return;
+
+      // Already playing (e.g. autoplay succeeded between events)
+      if (!a.paused) {
         markStarted();
         return;
       }
 
-      // On iOS Safari the safest path is a fresh Audio created inside the
-      // gesture callback — the browser marks it as user-initiated.
-      if (!audio || audio.paused) {
-        if (audio) {
-          // Dispose the pre-created one that couldn't autoplay.
-          audio.pause();
-          audio.removeAttribute('src');
-          audio.load();
+      // Ensure unmuted, full volume, then play synchronously in this handler.
+      a.muted = false;
+      a.volume = INITIAL_VOLUME;
+
+      try {
+        const p = a.play();
+        if (p && typeof p.then === 'function') {
+          p.then(markStarted).catch(() => {
+            // This event type didn't qualify; keep listeners for the next one.
+          });
+        } else {
+          markStarted();
         }
-        audio = createAudio();
-        audioRef.current = audio;
-      }
-
-      audio.muted = false;
-      audio.volume = INITIAL_VOLUME;
-
-      const p = audio.play();
-      if (p !== undefined) {
-        p.then(markStarted).catch(() => {
-          // This particular event type didn't qualify; keep listeners for the next one.
-        });
-      } else {
-        markStarted();
+      } catch {
+        // play() threw synchronously — keep listeners.
       }
     };
 
-    // ── mount: preload + try autoplay ───────────────────────────────────
-    const audio = createAudio();
-    audio.load();
-    audioRef.current = audio;
-
-    const p = audio.play();
-    if (p !== undefined) {
-      p.then(markStarted).catch(() => {
-        // Autoplay blocked — gesture listeners will handle it.
-      });
-    }
-
-    // Register gesture listeners (capture phase, passive so we don't block scrolling).
+    // Register capture-phase, passive listeners for the earliest possible moment.
     events.forEach((e) => {
       document.addEventListener(e, onGesture, { capture: true, passive: true });
     });
 
-    // ── cleanup ─────────────────────────────────────────────────────────
+    // ── Desktop autoplay attempt ────────────────────────────────────────
+    try {
+      const p = audio.play();
+      if (p && typeof p.then === 'function') {
+        p.then(markStarted).catch(() => {
+          // Blocked on this browser — gesture listeners will handle it.
+        });
+      }
+    } catch {
+      // Synchronous throw — gesture listeners remain.
+    }
+
+    // ── Cleanup ─────────────────────────────────────────────────────────
     return () => {
       disposed = true;
       detach();
