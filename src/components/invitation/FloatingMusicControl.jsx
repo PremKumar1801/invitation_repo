@@ -44,9 +44,9 @@ export default function FloatingMusicControl({ visible, isPlaying, isAutoplayBlo
           <button
             type="button"
             onClick={onToggle}
-            aria-label={isPlaying ? 'Pause wedding music' : 'Play wedding music'}
-            aria-pressed={isPlaying}
-            title={isPlaying ? 'Pause music' : 'Play music'}
+            aria-label={isPlaying ? 'Mute wedding music' : 'Unmute wedding music'}
+            aria-pressed={!isPlaying}
+            title={isPlaying ? 'Mute music' : 'Unmute music'}
             className="group relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-[#d4af37]/65 bg-gradient-to-br from-[#4a0e1b]/95 via-[#320813]/95 to-[#21040b]/95 text-[#f0dc9c] shadow-[0_8px_24px_rgba(0,0,0,0.5),0_0_14px_rgba(212,175,55,0.22)] backdrop-blur-md transition-transform duration-300 hover:scale-105 hover:border-[#f0dc9c]/85 hover:shadow-[0_10px_28px_rgba(0,0,0,0.6),0_0_20px_rgba(212,175,55,0.38)] active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f0dc9c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1f060a] cursor-pointer"
           >
             {/* Subtle breathing gold halo while playing */}

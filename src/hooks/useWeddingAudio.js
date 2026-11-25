@@ -21,6 +21,7 @@ export function useWeddingAudio(src = DEFAULT_AUDIO_SRC) {
     let isDisposed = false;
     const audio = new Audio(src);
     audio.loop = true;
+    audio.muted = false;
     audio.volume = INITIAL_VOLUME;
     audio.preload = 'auto';
 
@@ -100,7 +101,8 @@ export function useWeddingAudio(src = DEFAULT_AUDIO_SRC) {
     const audio = audioRef.current;
     if (!audio || hasError) return;
 
-    if (audio.paused) {
+    if (audio.paused || audio.muted) {
+      audio.muted = false;
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
