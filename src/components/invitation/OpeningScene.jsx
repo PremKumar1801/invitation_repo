@@ -27,9 +27,7 @@ function fadeUpVariants({ delay, speed, distance }) {
 
 function OpeningScene({
   title = 'A Celebration of Love',
-  ctaLabel = 'Tap to Open Invitation',
   cardHeading = 'You Are Cordially Invited',
-  onOpenStart,
   onComplete,
 }) {
   const [phase, setPhase] = useState(PHASES.IDLE);
@@ -45,30 +43,36 @@ function OpeningScene({
   }, [onComplete]);
 
   useEffect(() => {
-    const timers = timersRef.current;
-    return () => timers.forEach((timerId) => window.clearTimeout(timerId));
-  }, []);
+    const startOpening = () => {
+      if (hasStartedRef.current) return;
+      hasStartedRef.current = true;
+      setPhase(PHASES.OPENING);
 
-  const handleOpen = () => {
-    if (hasStartedRef.current) return;
-    hasStartedRef.current = true;
-    onOpenStart?.();
-    setPhase(PHASES.OPENING);
+      const milestones = [
+        [TIMELINE_MS.reveal, PHASES.REVEALING],
+        [TIMELINE_MS.hold, PHASES.HOLDING],
+        [TIMELINE_MS.exit, PHASES.EXITING],
+      ];
 
-    const milestones = [
-      [TIMELINE_MS.reveal, PHASES.REVEALING],
-      [TIMELINE_MS.hold, PHASES.HOLDING],
-      [TIMELINE_MS.exit, PHASES.EXITING],
-    ];
+      milestones.forEach(([at, nextPhase]) => {
+        timersRef.current.push(window.setTimeout(() => setPhase(nextPhase), at * speed));
+      });
 
-    milestones.forEach(([at, nextPhase]) => {
-      timersRef.current.push(window.setTimeout(() => setPhase(nextPhase), at * speed));
-    });
+      timersRef.current.push(
+        window.setTimeout(() => onCompleteRef.current?.(), TIMELINE_MS.complete * speed)
+      );
+    };
 
-    timersRef.current.push(
-      window.setTimeout(() => onCompleteRef.current?.(), TIMELINE_MS.complete * speed)
-    );
-  };
+    // Wait for the envelope & title entrance to settle, then open automatically.
+    const autoOpenTimer = window.setTimeout(startOpening, 1800 * speed);
+
+    return () => {
+      window.clearTimeout(autoOpenTimer);
+      timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+      timersRef.current = [];
+      hasStartedRef.current = false;
+    };
+  }, [speed]);
 
   const isIdle = phase === PHASES.IDLE;
   const isCardVisible = CARD_VISIBLE_PHASES.includes(phase);
@@ -79,7 +83,6 @@ function OpeningScene({
   };
 
   const titleVariants = fadeUpVariants({ delay: 0.9, speed, distance });
-  const hintVariants = fadeUpVariants({ delay: 1.7, speed, distance });
 
   return (
     <motion.section
@@ -105,20 +108,9 @@ function OpeningScene({
 
         <RoyalEnvelope
           phase={phase}
-          label={ctaLabel}
-          onOpen={handleOpen}
           speed={speed}
           distance={distance}
         />
-
-        <motion.p
-          className="opening-scene__hint"
-          variants={hintVariants}
-          initial="hidden"
-          animate={isIdle ? 'show' : 'hide'}
-        >
-          <span className="opening-scene__hint-text">{ctaLabel}</span>
-        </motion.p>
       </div>
 
       <div className="opening-scene__card-layer">

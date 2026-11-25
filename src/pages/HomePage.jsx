@@ -26,7 +26,7 @@ import { weddingConfig, weddingContent } from '../weddingConfig';
  */
 export default function HomePage() {
   const [openingDone, setOpeningDone] = useState(false);
-  const { isPlaying, hasStarted, hasError, start: startMusic, toggle: toggleMusic } = useWeddingAudio('/audio/wedding-music.mp3');
+  const { isPlaying, isAutoplayBlocked, hasError, toggle: toggleMusic } = useWeddingAudio('/audio/wedding-music.mp3');
 
   // Stable reference prevents re-subscribing timers inside OpeningScene
   const handleOpeningComplete = useCallback(() => {
@@ -41,9 +41,7 @@ export default function HomePage() {
           <OpeningScene
             key="opening"
             title={weddingConfig.openingTitle}
-            ctaLabel={weddingConfig.openingCta}
             cardHeading={weddingConfig.openingCardText}
-            onOpenStart={startMusic}
             onComplete={handleOpeningComplete}
           />
         )}
@@ -79,8 +77,9 @@ export default function HomePage() {
 
       {/* ── Persistent Floating Music Control ── */}
       <FloatingMusicControl
-        visible={hasStarted && !hasError}
+        visible={!hasError}
         isPlaying={isPlaying}
+        isAutoplayBlocked={isAutoplayBlocked}
         onToggle={toggleMusic}
       />
     </>

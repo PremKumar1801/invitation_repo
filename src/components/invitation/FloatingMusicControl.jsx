@@ -5,24 +5,42 @@ import { Music, VolumeX } from 'lucide-react';
 /**
  * Floating antique-gold & burgundy music toggle button anchored to bottom-right.
  * Displays a subtle golden pulse and animated icon motion while music is playing.
+ * If browser autoplay was blocked, shows a gentle, non-disruptive prompt pill.
  */
-export default function FloatingMusicControl({ visible, isPlaying, onToggle }) {
+export default function FloatingMusicControl({ visible, isPlaying, isAutoplayBlocked = false, onToggle }) {
   const reduceMotion = useReducedMotion();
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
+          data-music-control
           initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.85, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.85, y: 12 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60]"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] flex items-center gap-2.5"
           style={{
             paddingBottom: 'env(safe-area-inset-bottom, 0px)',
             paddingRight: 'env(safe-area-inset-right, 0px)',
           }}
         >
+          <AnimatePresence>
+            {isAutoplayBlocked && !isPlaying && (
+              <motion.button
+                type="button"
+                onClick={onToggle}
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 10 }}
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="px-3.5 py-1.5 rounded-full border border-[#d4af37]/60 bg-gradient-to-br from-[#4a0e1b]/95 via-[#320813]/95 to-[#21040b]/95 text-[#f0dc9c] text-xs sm:text-sm tracking-wide shadow-[0_8px_24px_rgba(0,0,0,0.5),0_0_14px_rgba(212,175,55,0.2)] backdrop-blur-md hover:border-[#f0dc9c]/85 transition-colors cursor-pointer whitespace-nowrap"
+              >
+                Tap for music
+              </motion.button>
+            )}
+          </AnimatePresence>
+
           <button
             type="button"
             onClick={onToggle}

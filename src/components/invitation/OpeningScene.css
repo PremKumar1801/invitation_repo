@@ -267,7 +267,7 @@
   z-index: 1;
 }
 
-/* The trigger wraps the whole envelope so touch and keyboard both work. */
+/* Envelope shell */
 .royal-envelope {
   position: absolute;
   inset: 0;
@@ -280,9 +280,8 @@
   border-radius: 8px;
   background: none;
   perspective: 1100px;
-  cursor: pointer;
+  cursor: default;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
 }
 
 .royal-envelope:disabled {

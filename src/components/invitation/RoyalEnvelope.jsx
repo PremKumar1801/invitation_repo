@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import WaxSeal from './WaxSeal';
 import { EASE_IN_OUT_SOFT, EASE_OUT_SOFT, PHASES } from './openingConfig';
 
-export default function RoyalEnvelope({ phase, label, onOpen, speed, distance }) {
+export default function RoyalEnvelope({ phase, speed, distance }) {
   const isIdle = phase === PHASES.IDLE;
   const isFloating = isIdle && distance > 0;
 
@@ -110,13 +110,7 @@ export default function RoyalEnvelope({ phase, label, onOpen, speed, distance })
         variants={floatVariants}
         animate={isFloating ? 'float' : 'still'}
       >
-        <button
-          type="button"
-          className="royal-envelope"
-          onClick={onOpen}
-          disabled={!isIdle}
-          aria-label={label}
-        >
+        <div className="royal-envelope" aria-hidden="true">
           <span className="royal-envelope__back" aria-hidden="true" />
           <span className="royal-envelope__pocket" aria-hidden="true" />
 
@@ -157,7 +151,7 @@ export default function RoyalEnvelope({ phase, label, onOpen, speed, distance })
               <WaxSeal />
             </motion.span>
           </span>
-        </button>
+        </div>
       </motion.div>
     </motion.div>
   );
